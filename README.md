@@ -6,17 +6,17 @@ setup scripts for my pis
 
 Run the following command:
 
-'''
+```
 wget -q0- https://raw.githubusercontent.com/bloodscript/pi-setup/master/docker_installation.sh | bash
-'''
+```
 
 # Compose setup
 
 If you deploy the compose file with
 
-'''
+```
 docker compose up -d
-'''
+```
 
 Your system should have the following services deployed
 
