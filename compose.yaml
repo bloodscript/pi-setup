@@ -1,0 +1,131 @@
+services:
+  adguard:
+    image: adguard/adguardhome
+    container_name: adguard
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+      - 853:853
+      - 3000:3000
+      - 53:53/udp
+    volumes:
+      - ./adguard/work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
+
+  homeassistant:
+    image: homeassistant/home-assistant
+    container_name: homeassistant
+    restart: always
+    privileged: true
+    network_mode: host
+    volumes:
+      - ./hass.io/config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyUSB1:/dev/ttyUSB1
+
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    restart: always
+    privileged: true
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red-data:/data
+
+  esphome:
+    image: esphome/esphome
+    platform: linux/arm64
+    container_name: esphome
+    restart: always
+    network_mode: host
+    privileged: true
+    environment:
+      - USERNAME=${ESPHOME_USERNAME}
+      - PASSWORD=${ESPHOME_PASSWORD}
+    volumes:
+      - ./esphome/config:/config
+      - /etc/localtime:/etc/localtime:ro
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    platform: linux/arm64
+    container_name: audiobookshelf
+    restart: always
+    ports:
+      - 13378:80
+    volumes:
+      - /ssd/audiobooks/:/audiobooks
+      - /ssd/audiobooks_english/:/audiobooks_english
+      - ./abs/podcasts/:/podcasts
+      - ./abs/config/:/config
+      - ./abs/metadata/:/metadata
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${HOMEPAGE_PORT}:3000
+    volumes:
+      - ./homepage/config/:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock # (optional) For docker integrations
+
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    platform: linux/arm64
+    container_name: mealie
+    restart: always
+    privileged: true
+    environment:
+    # Set Backend ENV Variables Here
+      - ALLOW_SIGNUP=true
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - MAX_WORKERS=1
+      - WEB_CONCURRENCY=1
+      - BASE_URL=${MEALIE_URL}
+    ports:
+        - ${MEALIE_PORT}:9000
+    volumes:
+      - .mealie/data:/app/data/
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:arm64v8-latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - WEBUI_PORT=${QBIT_PORT}
+    volumes:
+      - ./qbit/config:/config
+      - /ssd:/downloads
+      - /ssd/audiobooks:/audiobooks
+      - /ssd/audiobooks_english:/audiobooks_english
+      - /ssd/ebooks:/ebooks
+    ports:
+      - ${QBIT_PORT}:8080
+      - 54468:54468
+      - 54468:54468/udp
