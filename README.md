@@ -12,6 +12,19 @@ wget -q0- https://raw.githubusercontent.com/bloodscript/pi-setup/master/docker_i
 
 # Compose setup
 
+## ENV File
+
+The compose file expects some variables provided by an .env file.
+Please copy the env.example like this:
+
+```
+cp env.example .env
+```
+
+Add sudo if your current user doesn't have write rights in the current directory.
+
+## Deployment
+
 If you deploy the compose file with
 
 ```
@@ -38,4 +51,3 @@ Your system should have the following services deployed
   Self hosted recipe organizer and shopping lists
 - QBittorrent
   One common torrent client
-
