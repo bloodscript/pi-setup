@@ -1,4 +1,14 @@
 services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - ${PORTAINER_PORT}:9443
+    volumes:
+      - ./portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
   mariadb:
     image: mariadb
     container_name: mariadb_nextcloud
