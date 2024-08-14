@@ -1,4 +1,37 @@
 services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb_nextcloud
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_DATABASE=${MARIADB_DATABASE}
+      - MYSQL_USER=root
+    ports:
+      - 9022:3306
+    volumes:
+      - ./nextcloud/mariadb:/var/lib/mysql
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    links:
+      - mariadb:mysql
+    environment:
+      - MYSQL_PASSWORD=${MARIADB_PASSWORD}
+      - MYSQL_DATABASE=${MARIADB_DATABASE}
+      - MYSQL_USER=root
+      - MYSQL_HOST=mariadb
+    ports:
+      - ${NEXTCLOUD_PORT}:80
+    volumes:
+      - ./nextcloud/nextcloud:/var/www/html
+      - ./nextcloud/apps:/var/www/html/custom_apps
+      - ./nextcloud/config:/var/www/html/config
+      - ./nextcloud/data:/var/www/html/data
+
   adguard:
     image: adguard/adguardhome
     container_name: adguard
