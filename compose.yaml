@@ -93,8 +93,8 @@ services:
     ports:
       - 13378:80
     volumes:
-      - /ssd/audiobooks/:/audiobooks
-      - /ssd/audiobooks_english/:/audiobooks_english
+      - ${AUDIOBOOKS_VOL_1}/:/audiobooks  ### Add your files from host/network to any point in the container for later usage, you may also add multiple different volumes
+      - ${AUDIOBOOKS_VOL_2}/:/audiobooks_english
       - ./abs/podcasts/:/podcasts
       - ./abs/config/:/config
       - ./abs/metadata/:/metadata
@@ -111,7 +111,7 @@ services:
     container_name: homepage
     restart: always
     env_file:
-      - .env
+      - .envh
     ports:
       - ${HOMEPAGE_PORT}:3000
     volumes:

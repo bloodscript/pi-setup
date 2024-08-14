@@ -14,14 +14,15 @@ wget -q0- https://raw.githubusercontent.com/bloodscript/pi-setup/master/docker_i
 
 ## ENV File
 
-The compose file expects some variables provided by an .env file.
-Please copy the env.example like this:
+The compose file expects some variables provided by an .env file. Homepage expects some tokens and credentials, to seperate those an .envh file is needed.
+Please copy the env.example and envh.example like this:
 
 ```
 cp env.example .env
+cp envh.example .envh
 ```
 
-Add sudo if your current user doesn't have write rights in the current directory.
+Add sudo in front of the commands if your current user doesn't have write rights in the current directory.
 
 ## Deployment
 
